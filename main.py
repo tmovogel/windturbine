@@ -8,7 +8,7 @@ import importPolars as ip
 
 def finda(a):
     diff_1 = abs(a[0]-1/3)
-    diff_2 = abs(a[2]-1/3)
+    diff_2 = abs(a[1]-1/3)
     diff_3 = abs(a[2]-1/3)
     
     if diff_1 < diff_2 and diff_1 < diff_3:
