@@ -20,7 +20,7 @@ def finda(a):
     
     return a_opt
 
-# define the parameters
+# define the parameters, only R and L_init can be varied (lambda_des might aswell but current formula supossedly best)
 
 R = 0.9             # overall rotorradius (max 0.9m)
 r_hub = 0           # hub radius
@@ -41,8 +41,8 @@ mu = 1.47e-5        # dyn. viscosity air 20°C
 
 w = lambda_des*v/R     # rotational speed
 
-W_init = math.sqrt( ((1-1/3)*v)**2 + ((1+0)*w*0.7*R)**2)
-L_init = 0.7*R
+W_init = math.sqrt(((1-1/3)*v)**2 + ((1+0)*w*0.7*R)**2)
+L_init = 0.05
 Re_init = rho*W_init*L_init/mu  # initial Re guess
 Re = Re_init
 
