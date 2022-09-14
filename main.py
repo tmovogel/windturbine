@@ -39,13 +39,14 @@ rho = 1.2         # air density 20°C
 
 mu = 1.47e-5        # dyn. viscosity air 20°C
 
-n = 2000            # rotations per second
-w = 2*math.pi*n     # rotational speed
+w = lambda_des*v/R     # rotational speed
 
-
-Re_init = 200000    # initial Re guess
+W_init = math.sqrt( ((1-1/3)*v)**2 + ((1+0)*w*0.7*R)**2)
+L_init = 0.7*R
+Re_init = rho*W_init*L_init/mu  # initial Re guess
 Re = Re_init
-Re_old = 0
+
+Re_old = 0              # set for iteration loop criterion
 tol = 20000    
 
 # get the polar data for the airfoil
