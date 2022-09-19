@@ -147,7 +147,7 @@ print(f"For 2.1:\n"
 
 #2.3
 df2 = df[['r/R [m]', 'L_c/R', 'Theta', 'a', 'da', 'alpha_opt']].copy()
-df2.to_csv('results_3A_3_S807.csv', index=False, encoding='utf-8')
+df2.to_csv('results_3A_3_S808.csv', index=False, encoding='utf-8')
 plot_data(df2,'r/R [m]', 'L_c/R', profile)
 plot_data(df2,'r/R [m]', 'Theta', profile)
 
