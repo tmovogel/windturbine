@@ -52,11 +52,11 @@ def plot_data_2_graphs(df, x_column, y_column1, y_column2, y_label):
 # define the parameters
 profile = "S808" #declare the profile name for plotting
 R = 0.38  # overall rotorradius (max 0.9m) currently only works uo to 0.6m because of the polar file
-r_hub = 0  # hub radius
-N = 13  # Number of elements per blade (10...15)
+r_hub =  0.03 # hub radius
+N = 15  # Number of elements per blade (10...15)
 dr = R / N  # distance between element center points
 
-r_vec = np.arange(r_hub + dr / 2, R, dr)  # vector with all the centerpoint location
+r_vec = np.arange(dr / 2, R, dr)  # vector with all the centerpoint location
 
 Z = 2  # blade count
 
@@ -79,13 +79,13 @@ Re_init = calc_Re(rho, u_rel_init, L_c_init, mu)  # initial Re guess
 tol = 20000 #recommended by institute
 
 # get the polar data for the airfoil
-filename = 'S808_Airfoil_11polars.txt'
+filename = 'S808 Airfoil_11polars.txt'
 #TODO: change the file here to a custom file from us
 ClFun, CdFun, AoAmax, Relims, AoALims = ip.importPolars(filename,'ashes')
                                                         #'airfoiltools')
                                                         # 'ashes')
 
-df = pd.DataFrame(columns=['r', 'L_c', 'Theta', 'alpha_opt', 'a', 'da', 'Re', 'r/R [m]', 'L_c/R', 'dT', 'dM', 'dM*r']) #create a dataframe to store data
+df = pd.DataFrame(columns=['r', 'L_c', 'Theta', 'alpha_opt', 'a', 'da', 'Re', 'r/R [m]', 'L_c/R', 'dT', 'dM', 'dM*r', 'r-r_hub']) #create a dataframe to store data
 
 # here starts the loop over all elements
 for r in r_vec:
@@ -131,7 +131,7 @@ for r in r_vec:
     #Force calculation
     dT = C_a * 0.5 * rho * (U_rel ** 2) * L_c * dr * Z
     dM = C_r * 0.5 * rho * (U_rel ** 2) * L_c * dr * Z
-    df.loc[len(df.index)] = [r, L_c, Theta, alpha_opt, a, da, Re, r/R, L_c/R, dT, dM, dM*r] #add values to dataframe
+    df.loc[len(df.index)] = [r, L_c, Theta, alpha_opt, a, da, Re, r/R, L_c/R, dT, dM, dM*r, r-r_hub] #add values to dataframe
     print('@r/R = ',r/R,', Cord length Lc = ',L_c,', Twist angle Theta = ', Theta,'Re = ',Re)
     
 #2.1
@@ -143,30 +143,30 @@ print(f"For 2.1:\n"
       f"Re_init[at r/R [m] = 0.7] = {Re_init}\n"
       f"Number of elements = {N}")
 
-#TODO: 2.2 is not implemented yet
 
-#2.3
-df2 = df[['r/R [m]', 'L_c/R', 'Theta', 'a', 'da', 'alpha_opt']].copy()
-df2.to_csv('results_3A_3_S808.csv', index=False, encoding='utf-8')
-plot_data(df2,'r/R [m]', 'L_c/R', profile)
-plot_data(df2,'r/R [m]', 'Theta', profile)
-
-#2.4
-df3 = df[['r/R [m]', 'Re', 'dT', 'dM']].copy()
-df3.to_csv('results_3A_4_S808.csv', index=False, encoding='utf-8')
-#plot_data_2_graphs(df3,'r/R [m]', 'dT', 'dM', "Force [N]")
-M=df["dM*r"].sum()
-T=df["dT"].sum()
-P=M*w
-C_p=P/(0.5*rho*(v**3)*math.pi*(R**2))
-C_t=T/(0.5*rho*(v**2)*math.pi*(R**2))
-print(f"For 2.4:"
-      f"Total power produced: P = {P} W\n"
-      f"Power coefficient: C_p = {C_p}\n"
-      f"Thrust coefficient: C_t = {C_t}\n")
+# #2.3
+# df2 = df[['r/R [m]', 'L_c/R', 'Theta', 'a', 'da', 'alpha_opt']].copy()
+# df2.to_csv('results_3A_3_S808.csv', index=False, encoding='utf-8')
+# # plot_data(df2,'r/R [m]', 'L_c/R', profile)
+# # plot_data(df2,'r/R [m]', 'Theta', profile)
+#
+# #2.4
+# df3 = df[['r/R [m]', 'Re', 'dT', 'dM']].copy()
+# df3.to_csv('results_3A_4_S808.csv', index=False, encoding='utf-8')
+# #plot_data_2_graphs(df3,'r/R [m]', 'dT', 'dM', "Force [N]")
+# M=df["dM*r"].sum()
+# T=df["dT"].sum()
+# P=M*w
+# C_p=P/(0.5*rho*(v**3)*math.pi*(R**2))
+# C_t=T/(0.5*rho*(v**2)*math.pi*(R**2))
+# print(f"For 2.4:"
+#       f"Total power produced: P = {P} W\n"
+#       f"Power coefficient: C_p = {C_p}\n"
+#       f"Thrust coefficient: C_t = {C_t}\n")
 
 # Assignment 3B Task 3.1
-df4 = df[['r', 'L_c', 'Theta','Re']].copy()
+df4 = df[['r', 'L_c', 'Theta','Re', 'r-r_hub']].copy()
+df["L_c"] = np.where(df["L_c"] < 0.04, 0.04, df['L_c'])
 df4.to_csv('results_3B_S808.csv', index=False, encoding='utf-8')    
     
 
